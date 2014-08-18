@@ -51,7 +51,7 @@ $ vagrant ssh ceph-admin
 The `ceph-deploy` tool will write configuration files and logs to the current directory. So, let's create a directory for the new cluster:
 
 ```console
-ceph-admin$ mkdir test-cluster && cd test-cluster
+vagrant@ceph-admin:~$ mkdir test-cluster && cd test-cluster
 ```
 
 Let's prepare the machines:
@@ -79,7 +79,7 @@ osd pool default size = 2
 We're finally ready to install!
 
 ```console
-ceph-admin$ ceph-deploy install ceph-server-1 ceph-server-2 ceph-server-3
+vagrant@ceph-admin:~$ ceph-deploy install ceph-server-1 ceph-server-2 ceph-server-3
 ```
 
 ## Configure monitor and OSD services
@@ -87,7 +87,7 @@ ceph-admin$ ceph-deploy install ceph-server-1 ceph-server-2 ceph-server-3
 Next, we add a monitor node:
 
 ```console
-ceph-admin$ ceph-deploy mon create-initial
+vagrant@ceph-admin:~$ ceph-deploy mon create-initial
 ```
 
 And our two OSDs. For these, we need to log into the server machines directly:
@@ -103,8 +103,8 @@ $ vagrant ssh ceph-server-3 -c 'sudo mkdir /var/local/osd1'
 Now, back on our admin machine, we can prepare and activate the OSDs:
 
 ```console
-ceph-admin$ ceph-deploy osd prepare ceph-server-2:/var/local/osd0 ceph-server-3:/var/local/osd1
-ceph-admin$ ceph-deploy osd activate ceph-server-2:/var/local/osd0 ceph-server-3:/var/local/osd1
+vagrant@ceph-admin:~$ ceph-deploy osd prepare ceph-server-2:/var/local/osd0 ceph-server-3:/var/local/osd1
+vagrant@ceph-admin:~$ ceph-deploy osd activate ceph-server-2:/var/local/osd0 ceph-server-3:/var/local/osd1
 ```
 
 ## Configuration and status
@@ -112,19 +112,19 @@ ceph-admin$ ceph-deploy osd activate ceph-server-2:/var/local/osd0 ceph-server-3
 We can copy our config file and admin key to all the nodes, so each one can use the `ceph` CLI.
 
 ```console
-ceph-admin$ ceph-deploy admin ceph-admin ceph-server-1 ceph-server-2 ceph-server-3
+vagrant@ceph-admin:~$ ceph-deploy admin ceph-admin ceph-server-1 ceph-server-2 ceph-server-3
 ```
 
 We also should make sure the keyring is readable:
 
 ```console
-ceph-admin$ sudo chmod +r /etc/ceph/ceph.client.admin.keyring
+vagrant@ceph-admin:~$ sudo chmod +r /etc/ceph/ceph.client.admin.keyring
 ```
 
 Finally, check on the health of the cluster:
 
 ```console
-ceph-admin$ ceph health
+vagrant@ceph-admin:~$ ceph health
 ```
 
 It should report a state of `active + clean` once it has finished peering.
@@ -142,14 +142,14 @@ $ vagrant ssh ceph-server-1 -c 'sudo mkdir /var/local/osd2'
 
 Now, from the admin node, we prepare and activate the OSD:
 ```console
-ceph-admin$ ceph-deploy osd prepare ceph-node-1:/var/local/osd2
-ceph-admin$ ceph-deploy osd activate ceph-node-1:/var/local/osd2
+vagrant@ceph-admin:~$ ceph-deploy osd prepare ceph-node-1:/var/local/osd2
+vagrant@ceph-admin:~$ ceph-deploy osd activate ceph-node-1:/var/local/osd2
 ```
 
 Watch the rebalancing:
 
 ```console
-ceph-admin$ ceph -w
+vagrant@ceph-admin:~$ ceph -w
 ```
 
 You should eventually see it return to an `active+clean` state.
@@ -159,7 +159,7 @@ You should eventually see it return to an `active+clean` state.
 Let's add a metadata server to server1:
 
 ```console
-ceph-admin$ ceph-deploy mds create ceph-server-1
+vagrant@ceph-admin:~$ ceph-deploy mds create ceph-server-1
 ```
 
 ## Add more monitors
@@ -167,13 +167,13 @@ ceph-admin$ ceph-deploy mds create ceph-server-1
 We add monitors to servers 2 and 3.
 
 ```console
-ceph-admin$ ceph-deploy mon create ceph-server-2 ceph-server-3
+vagrant@ceph-admin:~$ ceph-deploy mon create ceph-server-2 ceph-server-3
 ```
 
 Watch the quorum status, and ensure it's happy:
 
 ```console
-ceph-admin$ ceph quorum_status --format json-pretty
+vagrant@ceph-admin:~$ ceph quorum_status --format json-pretty
 ```
 
 ## Install Ceph Object Gateway
