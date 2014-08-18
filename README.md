@@ -57,7 +57,7 @@ vagrant@ceph-admin:~$ mkdir test-cluster && cd test-cluster
 Let's prepare the machines:
 
 ```console
-ceph-admin$ ceph-deploy new ceph-server-1 ceph-server-2 ceph-server-3
+vagrant@ceph-admin:~$ ceph-deploy new ceph-server-1 ceph-server-2 ceph-server-3
 ```
 
 Now, we have to change a default setting. For our initial cluster, we are only going to have two [object storage daemons](http://ceph.com/docs/master/man/8/ceph-osd/). We need to tell Ceph to allow us to achieve an `active + clean` state with just two Ceph OSDs. Add `osd pool default size = 2` to `./ceph.conf`. Now, it should look similar to:
