@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
   # We need one Ceph admin machine to manage the cluster
   config.vm.define vm_name = "ceph-admin" do |config|
     config.vm.hostname = vm_name
-    ip = "172.21.12.1"
+    ip = "172.21.12.10"
     config.vm.network :private_network, ip: ip
     config.vm.provision :shell, :inline => "wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | apt-key add -", :privileged => true
     config.vm.provision :shell, :inline => "echo deb http://ceph.com/debian-firefly/ $(lsb_release -sc) main | tee /etc/apt/sources.list.d/ceph.list", :privileged => true
@@ -21,7 +21,7 @@ Vagrant.configure("2") do |config|
   # The Ceph client will be our client machine to mount volumes and interact with the cluster
   config.vm.define vm_name = "ceph-client" do |config|
     config.vm.hostname = vm_name
-    ip = "172.21.12.2"
+    ip = "172.21.12.11"
     config.vm.network :private_network, ip: ip
   end
 
@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
   (1..3).each do |i|
     config.vm.define vm_name = "ceph-server-#{i}" do |config|
       config.vm.hostname = vm_name
-      ip = "172.21.12.#{i+2}"
+      ip = "172.21.12.#{i+11}"
       config.vm.network :private_network, ip: ip
     end
   end
