@@ -34,7 +34,7 @@ $ vagrant plugin install vagrant-hostmanager
 
 ## Add your Vagrant key to the SSH agent
 
-Since the client machine will need the Vagrant SSH key to log into the server machines, we need it add it to our local SSH agent:
+Since the admin machine will need the Vagrant SSH key to log into the server machines, we need to add it to our local SSH agent:
 
 ```console
 $ ssh-add -K ~/.vagrant.d/insecure_private_key
@@ -42,7 +42,7 @@ $ ssh-add -K ~/.vagrant.d/insecure_private_key
 
 ## Start the VMs
 
-This instructs Vagrant to start the VMs and install `ceph-deploy` on the client.
+This instructs Vagrant to start the VMs and install `ceph-deploy` on the admin machine.
 
 ```console
 $ vagrant up
