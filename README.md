@@ -89,7 +89,7 @@ osd pool default size = 2
 We're finally ready to install!
 
 ```console
-vagrant@ceph-admin:~/test-cluster$ ceph-deploy install admin-node ceph-server-1 ceph-server-2 ceph-server-3
+vagrant@ceph-admin:~/test-cluster$ ceph-deploy install ceph-admin ceph-server-1 ceph-server-2 ceph-server-3
 ```
 
 ## Configure monitor and OSD services
@@ -110,7 +110,7 @@ vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-2 sudo mkdir /var/local/osd0
 vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-3 sudo mkdir /var/local/osd1
 ```
 
-Now, back on our admin machine, we can prepare and activate the OSDs:
+Now we can prepare and activate the OSDs:
 
 ```console
 vagrant@ceph-admin:~/test-cluster$ ceph-deploy osd prepare ceph-server-2:/var/local/osd0 ceph-server-3:/var/local/osd1
