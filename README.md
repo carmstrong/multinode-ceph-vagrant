@@ -140,7 +140,22 @@ Finally, check on the health of the cluster:
 vagrant@ceph-admin:~/test-cluster$ ceph health
 ```
 
-It should report a state of `active + clean` once it has finished peering.
+You should see something similar to this once it's healthy:
+
+```console
+vagrant@ceph-admin:~/test-cluster$ ceph health
+HEALTH_OK
+vagrant@ceph-admin:~/test-cluster$ ceph -s
+    cluster 18197927-3d77-4064-b9be-bba972b00750
+     health HEALTH_OK
+     monmap e2: 3 mons at {ceph-server-1=172.21.12.12:6789/0,ceph-server-2=172.21.12.13:6789/0,ceph-server-3=172.21.12.14:6789/0}, election epoch 6, quorum 0,1,2 ceph-server-1,ceph-server-2,ceph-server-3
+     osdmap e9: 2 osds: 2 up, 2 in
+      pgmap v13: 192 pgs, 3 pools, 0 bytes data, 0 objects
+            12485 MB used, 64692 MB / 80568 MB avail
+                 192 active+clean
+```
+
+Notice that we have two OSDs (`osdmap e9: 2 osds: 2 up, 2 in`) and all of the [placement groups](http://ceph.com/docs/master/rados/operations/pg-states/) (pgs) are reporting as `active+clean`.
 
 Congratulations!
 
@@ -155,8 +170,8 @@ vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-1 sudo mkdir /var/local/osd2
 
 Now, from the admin node, we prepare and activate the OSD:
 ```console
-vagrant@ceph-admin:~/test-cluster$ ceph-deploy osd prepare ceph-node-1:/var/local/osd2
-vagrant@ceph-admin:~/test-cluster$ ceph-deploy osd activate ceph-node-1:/var/local/osd2
+vagrant@ceph-admin:~/test-cluster$ ceph-deploy osd prepare ceph-server-1:/var/local/osd2
+vagrant@ceph-admin:~/test-cluster$ ceph-deploy osd activate ceph-server-1:/var/local/osd2
 ```
 
 Watch the rebalancing:
@@ -165,7 +180,18 @@ Watch the rebalancing:
 vagrant@ceph-admin:~/test-cluster$ ceph -w
 ```
 
-You should eventually see it return to an `active+clean` state.
+You should eventually see it return to an `active+clean` state, but this time with 3 OSDs:
+
+```console
+vagrant@ceph-admin:~/test-cluster$ ceph -w
+    cluster 18197927-3d77-4064-b9be-bba972b00750
+     health HEALTH_OK
+     monmap e2: 3 mons at {ceph-server-1=172.21.12.12:6789/0,ceph-server-2=172.21.12.13:6789/0,ceph-server-3=172.21.12.14:6789/0}, election epoch 30, quorum 0,1,2 ceph-server-1,ceph-server-2,ceph-server-3
+     osdmap e38: 3 osds: 3 up, 3 in
+      pgmap v415: 192 pgs, 3 pools, 0 bytes data, 0 objects
+            18752 MB used, 97014 MB / 118 GB avail
+                 192 active+clean
+```
 
 ### Add metadata server
 
