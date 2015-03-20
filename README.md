@@ -67,7 +67,7 @@ vagrant@ceph-admin:~$ mkdir test-cluster && cd test-cluster
 Let's prepare the machines:
 
 ```console
-vagrant@ceph-admin:~/test-cluster$ ceph-deploy new ceph-server-1 ceph-server-2 ceph-server-3
+vagrant@ceph-admin:~/test-cluster$ ceph-deploy new ceph-server-1 ceph-server-2 ceph-server-3 ceph-client
 ```
 
 Now, we have to change a default setting. For our initial cluster, we are only going to have two [object storage daemons](http://ceph.com/docs/master/man/8/ceph-osd/). We need to tell Ceph to allow us to achieve an `active + clean` state with just two Ceph OSDs. Add `osd pool default size = 2` to `./ceph.conf`. Now, it should look similar to:
@@ -89,7 +89,7 @@ osd pool default size = 2
 We're finally ready to install!
 
 ```console
-vagrant@ceph-admin:~/test-cluster$ ceph-deploy install ceph-admin ceph-server-1 ceph-server-2 ceph-server-3
+vagrant@ceph-admin:~/test-cluster$ ceph-deploy install ceph-admin ceph-server-1 ceph-server-2 ceph-server-3 ceph-client
 ```
 
 ## Configure monitor and OSD services
@@ -122,7 +122,7 @@ vagrant@ceph-admin:~/test-cluster$ ceph-deploy osd activate ceph-server-2:/var/l
 We can copy our config file and admin key to all the nodes, so each one can use the `ceph` CLI.
 
 ```console
-vagrant@ceph-admin:~/test-cluster$ ceph-deploy admin ceph-admin ceph-server-1 ceph-server-2 ceph-server-3
+vagrant@ceph-admin:~/test-cluster$ ceph-deploy admin ceph-admin ceph-server-1 ceph-server-2 ceph-server-3 ceph-client
 ```
 
 We also should make sure the keyring is readable:
@@ -225,7 +225,14 @@ Now that we have everything set up, let's actually use the cluster. We'll use th
 
 ### Create a block device
 
-TODO
+```console
+$ vagrant ssh ceph-client
+vagrant@ceph-client:~$ sudo rbd create foo --size 4096 -m ceph-server-1
+vagrant@ceph-client:~$ sudo rbd map foo --pool rbd --name client.admin -m ceph-server-1
+vagrant@ceph-client:~$ sudo mkfs.ext4 -m0 /dev/rbd/rbd/foo
+vagrant@ceph-client:~$ sudo mkdir /mnt/ceph-block-device
+vagrant@ceph-client:~$ sudo mount /dev/rbd/rbd/foo /mnt/ceph-block-device
+```
 
 ### Create a mount with Ceph FS
 
