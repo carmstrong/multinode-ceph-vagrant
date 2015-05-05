@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
     admin.vm.hostname = "ceph-admin"
     admin.vm.network :private_network, ip: "172.21.12.10"
     admin.vm.provision :shell, :inline => "wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | apt-key add -", :privileged => true
-    admin.vm.provision :shell, :inline => "echo deb http://ceph.com/debian-giant/ $(lsb_release -sc) main | tee /etc/apt/sources.list.d/ceph.list", :privileged => true
+    admin.vm.provision :shell, :inline => "echo deb http://ceph.com/debian-hammer/ $(lsb_release -sc) main | tee /etc/apt/sources.list.d/ceph.list", :privileged => true
     admin.vm.provision :shell, :inline => "DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -yq ceph-deploy", :privileged => true
   end
 
