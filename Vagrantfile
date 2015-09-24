@@ -5,6 +5,7 @@ Vagrant.configure("2") do |config|
   # some shared setup
   config.vm.box = "ubuntu/trusty64"
   config.ssh.forward_agent = true
+  config.ssh.insert_key = false
   config.hostmanager.enabled = true
   config.cache.scope = :box
 
