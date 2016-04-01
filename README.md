@@ -103,11 +103,11 @@ vagrant@ceph-admin:~/test-cluster$ ceph-deploy mon create-initial
 And our two OSDs. For these, we need to log into the server machines directly:
 
 ```console
-vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-2 sudo mkdir /var/local/osd0
+vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-2 "sudo mkdir /var/local/osd0 && sudo chown ceph:ceph /var/local/osd0"
 ```
 
 ```console
-vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-3 sudo mkdir /var/local/osd1
+vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-3 "sudo mkdir /var/local/osd1 && sudo chown ceph:ceph /var/local/osd1"
 ```
 
 Now we can prepare and activate the OSDs:
@@ -165,7 +165,7 @@ To more closely model a production cluster, we're going to add one more OSD daem
 
 ### Add an OSD
 ```console
-vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-1 sudo mkdir /var/local/osd2
+vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-1 "sudo mkdir /var/local/osd2 && sudo chown ceph:ceph /var/local/osd2"
 ```
 
 Now, from the admin node, we prepare and activate the OSD:
