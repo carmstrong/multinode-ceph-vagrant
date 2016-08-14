@@ -82,6 +82,8 @@ auth_service_required = cephx
 auth_client_required = cephx
 filestore_xattr_use_omap = true
 osd pool default size = 2
+osd max object name len = 256
+osd max object namespace len = 64
 ```
 
 ## Install Ceph
