@@ -15,7 +15,7 @@ Vagrant.configure("2") do |config|
     admin.vm.network :private_network, ip: "172.21.12.10"
     admin.vm.provision :shell, :inline => "wget -q -O- 'https://download.ceph.com/keys/release.asc' | apt-key add -", :privileged => true
     admin.vm.provision :shell, :inline => "echo deb http://download.ceph.com/debian/ $(lsb_release -sc) main | tee /etc/apt/sources.list.d/ceph.list", :privileged => true
-    admin.vm.provision :shell, :inline => "DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -yq ceph-deploy", :privileged => true
+    admin.vm.provision :shell, :inline => "DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -yq ntp ceph-deploy", :privileged => true
   end
 
   # The Ceph client will be our client machine to mount volumes and interact with the cluster
