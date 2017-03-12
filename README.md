@@ -76,7 +76,14 @@ Let's prepare the machines:
 vagrant@ceph-admin:~/test-cluster$ ceph-deploy new ceph-server-1 ceph-server-2 ceph-server-3
 ```
 
-Now, we have to change a default setting. For our initial cluster, we are only going to have two [object storage daemons](http://ceph.com/docs/master/man/8/ceph-osd/). We need to tell Ceph to allow us to achieve an `active + clean` state with just two Ceph OSDs. Add `osd pool default size = 2` to `./ceph.conf`. Now, it should look similar to:
+Now, we have to change a default setting. For our initial cluster, we are only going to have two [object storage daemons](http://ceph.com/docs/master/man/8/ceph-osd/). We need to tell Ceph to allow us to achieve an `active + clean` state with just two Ceph OSDs. Add `osd pool default size = 2` to `./ceph.conf`.
+
+Because we're dealing with multiple VMs sharing the same host, we can expect to see more clock skew. We can tell Ceph that we'd like to tolerate slightly more clock skew by adding the following section to `ceph.conf`:
+```
+mon_clock_drift_allowed = 1
+```
+
+After these changes, the file should look similar to:
 
 ```
 [global]
@@ -87,6 +94,7 @@ auth_cluster_required = cephx
 auth_service_required = cephx
 auth_client_required = cephx
 osd pool default size = 2
+mon_clock_drift_allowed = 1
 ```
 
 ## Install Ceph
