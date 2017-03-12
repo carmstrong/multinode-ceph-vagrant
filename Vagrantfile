@@ -2,8 +2,8 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  # some shared setup
-  config.vm.box = "ubuntu/trusty64"
+  # We don't use ubuntu/xenial64 because of https://bugs.launchpad.net/cloud-images/+bug/1569237
+  config.vm.box = "bento/ubuntu-16.04"
   config.ssh.forward_agent = true
   config.ssh.insert_key = false
   config.hostmanager.enabled = true
@@ -13,8 +13,8 @@ Vagrant.configure("2") do |config|
   config.vm.define "ceph-admin" do |admin|
     admin.vm.hostname = "ceph-admin"
     admin.vm.network :private_network, ip: "172.21.12.10"
-    admin.vm.provision :shell, :inline => "wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | apt-key add -", :privileged => true
-    admin.vm.provision :shell, :inline => "echo deb http://ceph.com/debian-hammer/ $(lsb_release -sc) main | tee /etc/apt/sources.list.d/ceph.list", :privileged => true
+    admin.vm.provision :shell, :inline => "wget -q -O- 'https://download.ceph.com/keys/release.asc' | apt-key add -", :privileged => true
+    admin.vm.provision :shell, :inline => "echo deb http://download.ceph.com/debian/ $(lsb_release -sc) main | tee /etc/apt/sources.list.d/ceph.list", :privileged => true
     admin.vm.provision :shell, :inline => "DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -yq ceph-deploy", :privileged => true
   end
 

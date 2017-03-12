@@ -96,8 +96,10 @@ osd max object namespace len = 64
 
 We're finally ready to install!
 
+Note here that we specify the Ceph release we'd like to install, which is [kraken](http://docs.ceph.com/docs/master/release-notes/#v11-2-0-kraken).
+
 ```console
-vagrant@ceph-admin:~/test-cluster$ ceph-deploy install ceph-admin ceph-server-1 ceph-server-2 ceph-server-3 ceph-client
+vagrant@ceph-admin:~/test-cluster$ ceph-deploy install --release=kraken ceph-admin ceph-server-1 ceph-server-2 ceph-server-3 ceph-client
 ```
 
 ## Configure monitor and OSD services
