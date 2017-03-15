@@ -83,7 +83,16 @@ Because we're dealing with multiple VMs sharing the same host, we can expect to 
 mon_clock_drift_allowed = 1
 ```
 
-After these changes, the file should look similar to:
+**Important**: As of the Jewel release of Ceph, the Ceph team recommends using XFS instead of ext4. Unfortunately, I couldn't find an easy and standard way in the Vagrantfile to attach an extra volume to use for Ceph. For more information, see the [Ceph docs](http://docs.ceph.com/docs/jewel/rados/configuration/filesystem-recommendations/#not-recommended) and [multinode-ceph-vagrant/#15](https://github.com/carmstrong/multinode-ceph-vagrant/issues/15).
+
+In the meantime, there is a workaround if we add the following to `ceph.conf`:
+
+```
+osd max object name len = 256
+osd max object namespace len = 64
+```
+
+After these few changes, the file should look similar to:
 
 ```
 [global]
@@ -95,6 +104,8 @@ auth_service_required = cephx
 auth_client_required = cephx
 osd pool default size = 2
 mon_clock_drift_allowed = 1
+osd max object name len = 256
+osd max object namespace len = 64
 ```
 
 ## Install Ceph
