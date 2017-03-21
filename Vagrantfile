@@ -29,6 +29,19 @@ Vagrant.configure("2") do |config|
     config.vm.define "ceph-server-#{i}" do |config|
       config.vm.hostname = "ceph-server-#{i}"
       config.vm.network :private_network, ip: "172.21.12.#{i+11}"
+      config.vm.provider "virtualbox" do |v|
+        filename="./.vagrant/ceph#{i}.disk"
+        #This next step can fail if the disk is already created, eg if you
+        #CTRL+C'd a previous vagrant up, so wrap it in conditional.
+        unless File.exist?(filename)
+          #Create a sparse volume with a max size of 10GB called
+          v.customize ['createhd', '--filename', filename, '--size', 10 * 1024]
+        end
+        #You may have to tweak the value for --storagectl.
+        #Other folks have noted what worked for them here:
+        # https://gist.github.com/leifg/4713995
+        v.customize ['storageattach', :id, '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', filename]
+      end
     end
   end
 end
