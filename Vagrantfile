@@ -34,7 +34,7 @@ Vagrant.configure("2") do |config|
         #This next step can fail if the disk is already created, eg if you
         #CTRL+C'd a previous vagrant up, so wrap it in conditional.
         unless File.exist?(filename)
-          #Create a sparse volume with a max size of 10GB called
+          #Create a sparse volume with a max size of 10GB called "#{filename}"
           v.customize ['createhd', '--filename', filename, '--size', 10 * 1024]
         end
         #You may have to tweak the value for --storagectl.
