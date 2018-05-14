@@ -76,20 +76,11 @@ Let's prepare the machines:
 vagrant@ceph-admin:~/test-cluster$ ceph-deploy new ceph-server-1 ceph-server-2 ceph-server-3
 ```
 
-Now, we have to change a default setting. For our initial cluster, we are only going to have two [object storage daemons](http://ceph.com/docs/master/man/8/ceph-osd/). We need to tell Ceph to allow us to achieve an `active + clean` state with just two Ceph OSDs. Add `osd pool default size = 2` to `./ceph.conf`.
+Now, we have to change a default setting. For our initial cluster, we are only going to have two [object storage daemons](http://docs.ceph.com/docs/master/architecture/#the-ceph-storage-cluster). We need to tell Ceph to allow us to achieve an `active + clean` state with just two Ceph OSDs. Add `osd pool default size = 2` to `./ceph.conf`.
 
 Because we're dealing with multiple VMs sharing the same host, we can expect to see more clock skew. We can tell Ceph that we'd like to tolerate slightly more clock skew by adding the following section to `ceph.conf`:
 ```
 mon_clock_drift_allowed = 1
-```
-
-**Important**: As of the Jewel release of Ceph, the Ceph team recommends using XFS instead of ext4. Unfortunately, I couldn't find an easy and standard way in the Vagrantfile to attach an extra volume to use for Ceph. For more information, see the [Ceph docs](http://docs.ceph.com/docs/jewel/rados/configuration/filesystem-recommendations/#not-recommended) and [multinode-ceph-vagrant/#15](https://github.com/carmstrong/multinode-ceph-vagrant/issues/15).
-
-In the meantime, there is a workaround if we add the following to `ceph.conf`:
-
-```
-osd max object name len = 256
-osd max object namespace len = 64
 ```
 
 After these few changes, the file should look similar to:
@@ -104,18 +95,16 @@ auth_service_required = cephx
 auth_client_required = cephx
 osd pool default size = 2
 mon_clock_drift_allowed = 1
-osd max object name len = 256
-osd max object namespace len = 64
 ```
 
 ## Install Ceph
 
 We're finally ready to install!
 
-Note here that we specify the Ceph release we'd like to install, which is [kraken](http://docs.ceph.com/docs/master/release-notes/#v11-2-0-kraken).
+Note here that we specify the Ceph release we'd like to install, which is [luminous](http://docs.ceph.com/docs/master/releases/luminous/).
 
 ```console
-vagrant@ceph-admin:~/test-cluster$ ceph-deploy install --release=kraken ceph-admin ceph-server-1 ceph-server-2 ceph-server-3 ceph-client
+vagrant@ceph-admin:~/test-cluster$ ceph-deploy install --release=luminous ceph-admin ceph-server-1 ceph-server-2 ceph-server-3 ceph-client
 ```
 
 ## Configure monitor and OSD services
@@ -181,13 +170,13 @@ vagrant@ceph-admin:~/test-cluster$ ceph -s
                  192 active+clean
 ```
 
-Notice that we have two OSDs (`osdmap e9: 2 osds: 2 up, 2 in`) and all of the [placement groups](http://ceph.com/docs/master/rados/operations/pg-states/) (pgs) are reporting as `active+clean`.
+Notice that we have two OSDs (`osdmap e9: 2 osds: 2 up, 2 in`) and all of the [placement groups](http://docs.ceph.com/docs/master/rados/operations/placement-groups/) (pgs) are reporting as `active+clean`.
 
 Congratulations!
 
 ## Expanding the cluster
 
-To more closely model a production cluster, we're going to add one more OSD daemon and a [Ceph Metadata Server](http://ceph.com/docs/master/man/8/ceph-mds/). We'll also add monitors to all hosts instead of just one.
+To more closely model a production cluster, we're going to add one more OSD daemon and a [Ceph Metadata Server](http://docs.ceph.com/docs/master/man/8/ceph-mds/). We'll also add monitors to all hosts instead of just one.
 
 ### Add an OSD
 ```console
