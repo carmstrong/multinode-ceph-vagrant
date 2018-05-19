@@ -152,6 +152,12 @@ vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-2 sudo chmod +r /etc/ceph/cep
 vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-3 sudo chmod +r /etc/ceph/ceph.client.admin.keyring
 ```
 
+Add a mgr for mon node 
+```console
+    ceph-deploy mgr create ceph-admin:mon_mgr
+```
+
+
 Finally, check on the health of the cluster:
 
 ```console
