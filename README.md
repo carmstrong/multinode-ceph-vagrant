@@ -258,6 +258,11 @@ vagrant@ceph-client:~$ sudo mkdir /mnt/ceph-block-device
 vagrant@ceph-client:~$ sudo mount /dev/rbd/rbd/foo /mnt/ceph-block-device
 ```
 
+### Open dashboard
+`ceph mgr module enable dashboard`
+the default port:7000
+
+
 ### Create a mount with Ceph FS
 
 TODO
