@@ -97,7 +97,7 @@ osd pool default size = 2
 mon_clock_drift_allowed = 1
 ```
 ## Before Install Ceph
-You can set he memory used by every vm, the defualt is 1024M(1g).which is to large for my Mac book 4g total memory, so I modify
+You can set the memory used by every vm, the defualt is 1024M(1g).which is to large for my Mac book 4g total memory, so I modify
 it to 512M (for virtual box, modify on the graphic interface)
 
 ## Install Ceph
