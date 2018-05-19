@@ -259,7 +259,9 @@ vagrant@ceph-client:~$ sudo mount /dev/rbd/rbd/foo /mnt/ceph-block-device
 ```
 
 ### Open dashboard
+
 `ceph mgr module enable dashboard`
+
 the default port:7000
 
 
