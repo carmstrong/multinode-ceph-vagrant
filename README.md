@@ -96,6 +96,13 @@ auth_client_required = cephx
 osd pool default size = 2
 mon_clock_drift_allowed = 1
 ```
+## Before Install Ceph
+You can set the memory used by every vm, the defualt is 1024M(1g).which is to large for small memory pc, so modify
+it to 512M (for virtual box, modify on the graphic interface)
+```
+*.vm.memory = 512
+*.vm.cpus = 2
+```
 
 ## Install Ceph
 
@@ -148,6 +155,12 @@ vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-1 sudo chmod +r /etc/ceph/cep
 vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-2 sudo chmod +r /etc/ceph/ceph.client.admin.keyring
 vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-3 sudo chmod +r /etc/ceph/ceph.client.admin.keyring
 ```
+
+Add a mgr for mon node 
+```console
+    ceph-deploy mgr create ceph-admin:mon_mgr
+```
+
 
 Finally, check on the health of the cluster:
 
@@ -248,6 +261,13 @@ vagrant@ceph-client:~$ sudo mkfs.ext4 -m0 /dev/rbd/rbd/foo
 vagrant@ceph-client:~$ sudo mkdir /mnt/ceph-block-device
 vagrant@ceph-client:~$ sudo mount /dev/rbd/rbd/foo /mnt/ceph-block-device
 ```
+
+### Open dashboard
+
+`ceph mgr module enable dashboard`
+
+the default port:7000
+
 
 ### Create a mount with Ceph FS
 
