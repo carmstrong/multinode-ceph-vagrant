@@ -1,6 +1,11 @@
 #!/bin/bash
 
+export CEPH_RELEASE="mimic"
+
 set -e
+
+wget -q -O- 'https://download.ceph.com/keys/release.asc' | sudo apt-key add -
+echo deb https://download.ceph.com/debian-${CEPH_RELEASE}/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
 
 DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -yq ntp ceph-deploy
 
@@ -10,7 +15,7 @@ cp .ssh/id_rsa.pub /root/.ssh/authorized_keys
 mkdir -p test-cluster
 cd test-cluster
 ssh-keyscan -H -t rsa ceph-server-1 ceph-server-2 ceph-server-3 ceph-client > /root/.ssh/known_hosts
-ceph-deploy install --release=mimic ceph-admin ceph-server-1 ceph-server-2 ceph-server-3 ceph-client
+ceph-deploy install --release=${CEPH_RELEASE} ceph-admin ceph-server-1 ceph-server-2 ceph-server-3 ceph-client
 ceph-deploy new ceph-server-1 ceph-server-2 ceph-server-3
 echo "mon_clock_drift_allowed = 1" >> ceph.conf
 ceph-deploy mon create-initial
