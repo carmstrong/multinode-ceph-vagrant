@@ -32,20 +32,6 @@ $ vagrant plugin install vagrant-cachier
 $ vagrant plugin install vagrant-hostmanager
 ```
 
-## Add your Vagrant key to the SSH agent
-
-Since the admin machine will need the Vagrant SSH key to log into the server machines, we need to add it to our local SSH agent:
-
-On Mac:
-```console
-$ ssh-add -K ~/.vagrant.d/insecure_private_key
-```
-
-On \*nix:
-```console
-$ ssh-add -k ~/.vagrant.d/insecure_private_key
-```
-
 ## Start the VMs
 
 This instructs Vagrant to start the VMs and install `ceph-deploy` on the admin machine.
@@ -54,82 +40,9 @@ This instructs Vagrant to start the VMs and install `ceph-deploy` on the admin m
 $ vagrant up
 ```
 
-## Create the cluster
-
-We'll create a simple cluster and make sure it's healthy. Then, we'll expand it.
-
-First, we need to get an interactive shell on the admin machine:
-
+## Login to admin node
 ```console
-$ vagrant ssh ceph-admin
-```
-
-The `ceph-deploy` tool will write configuration files and logs to the current directory. So, let's create a directory for the new cluster:
-
-```console
-vagrant@ceph-admin:~$ mkdir test-cluster && cd test-cluster
-```
-
-Let's prepare the machines:
-
-```console
-vagrant@ceph-admin:~/test-cluster$ ceph-deploy new ceph-server-1 ceph-server-2 ceph-server-3
-```
-
-Now, we have to change a default setting. For our initial cluster, we are only going to have two [object storage daemons](http://docs.ceph.com/docs/master/architecture/#the-ceph-storage-cluster). We need to tell Ceph to allow us to achieve an `active + clean` state with just two Ceph OSDs. Add `osd pool default size = 2` to `./ceph.conf`.
-
-Because we're dealing with multiple VMs sharing the same host, we can expect to see more clock skew. We can tell Ceph that we'd like to tolerate slightly more clock skew by adding the following section to `ceph.conf`:
-```
-mon_clock_drift_allowed = 1
-```
-
-After these few changes, the file should look similar to:
-
-```
-[global]
-fsid = 7acac25d-2bd8-4911-807e-e35377e741bf
-mon_initial_members = ceph-server-1, ceph-server-2, ceph-server-3
-mon_host = 172.21.12.12,172.21.12.13,172.21.12.14
-auth_cluster_required = cephx
-auth_service_required = cephx
-auth_client_required = cephx
-osd pool default size = 2
-mon_clock_drift_allowed = 1
-```
-
-## Install Ceph
-
-We're finally ready to install!
-
-Note here that we specify the Ceph release we'd like to install, which is [luminous](http://docs.ceph.com/docs/master/releases/luminous/).
-
-```console
-vagrant@ceph-admin:~/test-cluster$ ceph-deploy install --release=luminous ceph-admin ceph-server-1 ceph-server-2 ceph-server-3 ceph-client
-```
-
-## Configure monitor and OSD services
-
-Next, we add a monitor node:
-
-```console
-vagrant@ceph-admin:~/test-cluster$ ceph-deploy mon create-initial
-```
-
-And our two OSDs. For these, we need to log into the server machines directly:
-
-```console
-vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-2 "sudo mkdir /var/local/osd0 && sudo chown ceph:ceph /var/local/osd0"
-```
-
-```console
-vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-3 "sudo mkdir /var/local/osd1 && sudo chown ceph:ceph /var/local/osd1"
-```
-
-Now we can prepare and activate the OSDs:
-
-```console
-vagrant@ceph-admin:~/test-cluster$ ceph-deploy osd prepare ceph-server-2:/var/local/osd0 ceph-server-3:/var/local/osd1
-vagrant@ceph-admin:~/test-cluster$ ceph-deploy osd activate ceph-server-2:/var/local/osd0 ceph-server-3:/var/local/osd1
+vagrant ssh
 ```
 
 ## Configuration and status
