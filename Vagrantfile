@@ -28,6 +28,12 @@ Vagrant.configure("2") do |config|
     config.vm.define "ceph-server-#{i}" do |config|
       config.vm.hostname = "ceph-server-#{i}"
       config.vm.network :private_network, ip: "172.21.12.#{i+11}"
+      config.vm.provider "virtualbox" do |vb|
+        unless File.exist?("./secondDisk_#{i}.vdi")
+          vb.customize ['createhd', '--filename', "./secondDisk_#{i}.vdi", '--variant', 'Fixed', '--size', 10 * 1024]
+        end
+        vb.customize ['storageattach', :id,  '--storagectl', 'SCSI', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', "./secondDisk_#{i}.vdi"]
+      end
       # ceph-deploy will assume remote machines have python2 installed
       config.vm.provision :shell, :inline => "DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -yq ntp python", :privileged => true
       config.vm.provision "file", source: "key_rsa.pub", destination: "authorized_keys"
