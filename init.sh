@@ -24,7 +24,7 @@ ceph-deploy install --release=${CEPH_RELEASE} ceph-admin ceph-server-1 ceph-serv
 ceph-deploy new ceph-server-1 ceph-server-2 ceph-server-3
 echo "mon_clock_drift_allowed = 1" >> ceph.conf
 echo "[mon]" >> ceph.conf
-echo "mon-allow-pool-delete = true" >> ceph.conf
+echo "mon_allow_pool_delete = true" >> ceph.conf
 
 # other dependencies
 ssh ceph-server-1 DEBIAN_FRONTEND=noninteractive apt install -yq ceph-mgr-dashboard python-routes
@@ -57,5 +57,10 @@ ACCESS_KEY=$(echo $ADMIN_USER | jq ".keys[0].access_key")
 SECRET_KEY=$(echo $ADMIN_USER | jq ".keys[0].secret_key")
 ceph dashboard set-rgw-api-access-key $ACCESS_KEY
 ceph dashboard set-rgw-api-secret-key $SECRET_KEY
+
+# ceph fs setup
+ceph osd pool create cephfs_data 8
+ceph osd pool create cephfs_metadata 8
+ceph fs new cephfs cephfs_metadata cephfs_data
 
 # ceph dashboard ac-user-create administrator password administrator
