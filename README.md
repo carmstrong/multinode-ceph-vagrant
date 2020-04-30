@@ -149,6 +149,12 @@ vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-2 sudo chmod +r /etc/ceph/cep
 vagrant@ceph-admin:~/test-cluster$ ssh ceph-server-3 sudo chmod +r /etc/ceph/ceph.client.admin.keyring
 ```
 
+We also need to create a manager for the cluster. In this case, we make `ceph-admin` the manager:
+
+```console
+vagrant@ceph-admin:~/test-cluster$ ceph-deploy mgr create ceph-admin:mon_mgr
+```
+
 Finally, check on the health of the cluster:
 
 ```console
@@ -228,6 +234,12 @@ Watch the quorum status, and ensure it's happy:
 
 ```console
 vagrant@ceph-admin:~/test-cluster$ ceph quorum_status --format json-pretty
+```
+
+Create a default `rbd` pool:
+
+```console
+vagrant@ceph-admin:~/test-cluster$ ceph osd pool create rbd 150 150
 ```
 
 ## Install Ceph Object Gateway
